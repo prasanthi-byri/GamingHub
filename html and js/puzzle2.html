@@ -1,0 +1,246 @@
+<html>
+    <head>
+        <title>Slide puzzle</title>
+        <style>
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+                text-align: center;
+                color:rgb(75, 75, 213);
+                background:url("https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_52683-59881.jpg?w=360");
+                background-size: cover;
+            }
+            #board{
+                width: 360px;
+                height: 360px;
+                background-color: lightblue;
+                border:1px solid rgb(75, 75, 213);
+
+                margin:0 auto;
+                display:flex;
+                flex-wrap:wrap;
+            }
+            #board img{
+                width:118px;
+                height:118px;
+                border:0.5px solid rgb(75, 75, 213);
+            }
+            .container{
+                position:fixed;
+                top:0;
+                left:0;
+                background-image: linear-gradient(150deg,pink,blueviolet,skyblue);
+                width:100%;
+                height:100%;justify-content: center;
+                padding: auto;
+            }
+            
+            .countdown{
+list-style-type: none;margin-top: -10px;
+display: flex; padding-top: -40px; font-size: 60px; padding-left:700px; 
+color:white;font-family: 'Times New Roman', Times, serif;
+            }
+            #start{
+                background:linear-gradient( blueviolet,purple);
+                color:white;
+                font-size:30px;
+                margin-left:50px;
+                border:none;
+                border-radius: 35px;
+                padding:10px;
+                padding-left:30px; padding-right:30px;
+            }
+            #ok{
+                background:linear-gradient( blueviolet,purple);
+                color:white;
+                font-size:30px;
+                margin-left:30px; margin-top: -55px;
+                border:none;
+                border-radius: 35px;
+                padding:10px;
+                padding-left:40px; padding-right:40px;
+            }
+            #caution{
+                color:white;
+                text-align: center;
+                font-size:35px; margin-top: -25px;
+                padding-left: 100px;
+                visibility: hidden;
+            }
+            #fail{
+                background-color: white;
+                width:600px;
+                height:300px;
+                padding-top:60px;
+                position:fixed;
+                top:25%;
+                left:50%;transform:translate(-50%,-50%)scale(0.2);visibility: hidden;
+            }
+            /* previous and next */
+            #next{
+                position: absolute;
+                bottom:0;
+                right:0;
+                z-index:2000;
+                background-color: rgb(12, 12, 138);
+                font-size: 20px;
+                color: white;
+                font-weight: bold;
+                padding-left:20px; padding-top:10px;
+                padding-bottom:10px;
+                padding-right:20px;
+                border-radius:20px;
+                border:none;
+
+            }
+        </style>
+    </head>
+    <body>
+        <h1 style="color:rgb(75, 75, 213);font-family:Verdana, Geneva, Tahoma, sans-serif;text-align: center;font-size: 70px;margin-top:30px;"> Puzzle Quest</h1>
+        <h1 style="color:rgb(75, 75, 213);font-family:Verdana, Geneva, Tahoma, sans-serif;text-align: center;font-size: 40px;margin-top:30px;"> Andhra University</h1>
+        <div id="board"></div>
+        <h1>Turns: <span id="turns">0</span></h1>
+
+        <div class="container" id="container">
+            <h1 style="text-align:center ;color:white;font-weight: bold;font-size:70px;font-family:'Times New Roman', Times, serif;margin-top: 100px;margin-left:50px;" >PUZZLE QUEST</h1>
+            <h1 style="text-align:center ;color:white;font-weight: bold;font-size:70px;font-family:'Times New Roman', Times, serif;margin-top: 60px;margin-left:50px;">Caution Timer</h1>
+            <ul class="countdown" id="countdown">
+            <li><div class="minutes" id="minutes"> 00 </div></li>
+            <li>:</li>
+            <li><div class="seconds" id="seconds"> 00 </div></li></ul>
+            <p id="caution"> It's time to relax. Take break and resume the game after 5 minutes </p>
+            <button id="start" onclick="startTimer();againStart();"> Start</button>
+            <button id="ok" > <a style="color:white;text-decoration:none;" href="game.html">Quit</a></button>
+        </div>
+        <div id="fail">
+            <img src="2198px-Error.svg-removebg-preview.png" width="70px;" height="70px;">
+            <h1 >You have failed to solve the puzzle</h1>
+            <button style="background-color: blue;color:white;border:none;border-radius:40px;padding:10px;padding-left:20px;padding-right:20px;font-size:25px;font-family: 'Times New Roman', Times, serif;"><a style="color:white;text-decoration:none;" href="new.html">Restart</a></button>
+        </div>
+        <button id="next" ><a href="menja.html" style="font-size: 25px;color:white;text-decoration: none;font-weight: bold;">Next</a></button>
+
+
+        <script>
+            var rows=3;
+            var columns=3;
+
+            var currTile = '';
+            var otherTile;//blank tile
+
+            var turns=0;
+
+            //var imgOrder=["1","2","3","4","5","6","7","8","9"];
+            var imgOrder=["4","2","8","5","1","6","3","9","7"];
+
+            window.onload=function(){
+                for(let r=0;r<rows;r++){
+                    for(let c=0;c<columns;c++){
+                        //let dragStart,dragOver,dragEnter,dragLeave,dragDrop,dragEnd;
+                        //<img id="0-0" src="1.jpg">
+                        let tile=document.createElement("img");
+                        tile.id=r.toString() + "-" +c.toString();
+                        tile.src=imgOrder.shift() +".jpg";
+                         
+                        //drag functionality
+                        tile.addEventListener("dragstart", dragStart);//click an img to drag
+                        tile.addEventListener("dragover", dragOver);//moving img ariund while clicked
+                        tile.addEventListener("dragenter", dragEnter);//dragging img onto another one
+                        tile.addEventListener("dragleave", dragLeave);//dragged img leaving another img
+                        tile.addEventListener("drop", dragDrop);//drag an img over another img,drop the img
+                        tile.addEventListener("dragend", dragEnd);//after drag drop, swap the two tiles
+
+                        document.getElementById("board").append(tile);
+                    }
+                }
+            }
+            function dragStart(){
+                currTile=this;
+                 //this refers to the img tile being dragged
+            }
+            function dragOver(e){
+                e.preventDefault();
+            }
+            function dragEnter(e){
+                e.preventDefault();
+            }
+            function dragLeave(){
+                
+            }
+            function dragDrop(){
+                otherTile=this; //this refers to the img tile being dropped on
+                
+            }
+
+            function dragEnd(){
+                /*if(!otherTile.src.includes("7.jpg")){
+                    return;
+                }
+                let currCoords = currTile.id.split(); //ex) "0-0" -> ["0", "0"]
+                let r= parseInt(currCoords[0]);
+                let c=parseInt(currCoords[1]);
+
+                let otherCoords = currTile.id.split("-");
+                let r2= parseInt(otherCoords[0]);
+                let c2=parseInt(otherCoords[1]);
+
+                let moveLeft = (r == r2) && (c2 == c-1);
+                let moveRight = (r == r2) && (c2 == c+1);
+
+                let moveUp = (c == c2) && (r2 == r-1);
+                let moveDown = (c == c2) && (r2 == r+1);
+
+                let isAdjacency = moveLeft || moveRight || moveUp || moveDown;
+                
+                if (isAdjacency){*/
+                    if(turns<10){
+                  let currImg=currTile.src;
+                  let otherImg=otherTile.src;
+
+                  currTile.src=otherImg;
+                  otherTile.src=currImg;
+
+                  turns += 1;
+                  document.getElementById("turns").innerText = turns;
+                    }
+                    else{
+                      document.getElementById("fail").style.visibility="visible";
+                      document.getElementById("fail").style.transform="translate(-50%,0)scale(1)";
+                    }
+                
+            }
+            const startingMinutes=1;
+            let time=startingMinutes * 60;
+            let minutes=document.getElementById("minutes"),
+                seconds=document.getElementById("seconds");
+                
+            function startTimer(){
+                setInterval(updateTimer,1000);
+                document.getElementById("container").style.visibility="hidden";                
+            }
+            function updateTimer(){
+            
+                const min=Math.floor(time/60);
+                let sec=time%60;
+                if((min!=00)||(sec!=00)){
+                sec=sec<10 ? '0' +sec :sec;
+                minutes.innerHTML=`${min}`;
+                seconds.innerHTML=`${sec}`;
+                time--;
+                }
+                else{
+                    document.getElementById("container").style.visibility="visible";
+                    document.getElementById("caution").style.visibility="visible";
+                }}
+                
+                function againStart(){
+                    
+                    time=startingMinutes*60;
+                    setInterval(updateTimer,1000);
+                    document.getElementById("caution").style.visibility="hidden";
+                    document.getElementById("container").style.visibility="hidden";  
+                }
+               
+            
+            
+        </script>
+    </body>
+</html>

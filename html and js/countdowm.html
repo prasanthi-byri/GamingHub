@@ -1,0 +1,83 @@
+
+<html>
+    <head> <title>stopwatch</title>
+        <style>
+            .container{
+                background-image: linear-gradient(150deg,pink,blueviolet,skyblue);
+                width:100%;
+                height:100%;justify-content: center;
+                padding: auto;
+            }
+            
+            .countdown{
+list-style-type: none;
+display: flex; padding-top: 200px; font-size: 60px; padding-left:700px; 
+color:white;font-family: 'Times New Roman', Times, serif;
+            }
+            #start{
+                background:linear-gradient( blueviolet,purple);
+                color:white;
+                font-size:30px;
+                margin-left:630px;
+                border:none;
+                border-radius: 35px;
+                padding:10px;
+                padding-left:30px; padding-right:30px;
+            }
+            #ok{
+                background:linear-gradient( blueviolet,purple);
+                color:white;
+                font-size:30px;
+                margin-left:790px; margin-top: -55px;
+                border:none;
+                border-radius: 35px;
+                padding:10px;
+                padding-left:40px; padding-right:40px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container" id="container">
+            <ul class="countdown" id="countdown">
+            <li><div class="minutes" id="minutes"> 00 </div></li>
+            <li>:</li>
+            <li><div class="seconds" id="seconds"> 00 </div></li></ul>
+            <button id="start" onclick="startTimer();againStart();"> Start</button>
+            <button id="ok" onclick="close();" > Ok</button>
+        </div>
+        <script>
+               const startingMinutes=1;
+            let time=startingMinutes * 60;
+            let minutes=document.getElementById("minutes"),
+                seconds=document.getElementById("seconds");
+                
+            function startTimer(){
+                setInterval(updateTimer,1000);
+                document.getElementById("container").style.visibility="hidden";                
+            }
+            function updateTimer(){
+            
+                const min=Math.floor(time/60);
+                let sec=time%60;
+                if((min!=00)||(sec!=00)){
+                sec=sec<10 ? '0' +sec :sec;
+                minutes.innerHTML=`${min}`;
+                seconds.innerHTML=`${sec}`;
+                time--;
+                }
+                else{
+                    document.getElementById("container").style.visibility="visible";
+                   
+                }}
+                
+                function againStart(){
+                    
+                    time=startingMinutes*60;
+                    setInterval(updateTimer,1000);
+                    document.getElementById("container").style.visibility="hidden";  
+                }
+               
+            
+            
+        </script>
+</html>
